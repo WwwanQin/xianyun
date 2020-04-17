@@ -13,19 +13,21 @@ export const mutations = {
 export const actions = {
     userLogin(result,{username,password}){
         let {commit} = result;
-        this.$axios({
-            url: '/accounts/login',
-            method: 'post',
-            data:{
-                username,
-                password
-            }
-        }).then(res => {
-            console.log(res.data);
-            commit('saveUserInfo',res.data);
-            return Promise.resolve(res);
-        }).catch(reason => {
-            return reason;
+        return new Promise((resolve,reject) => {
+            this.$axios({
+                url: '/accounts/login',
+                method: 'post',
+                data:{
+                    username,
+                    password
+                }
+            }).then(res => {
+                console.log(res.data);
+                commit('saveUserInfo',res.data);
+                resolve(res);
+            }).catch(reason => {
+                reject(reason);
+            })
         })
     }
 }
