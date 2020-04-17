@@ -5,13 +5,17 @@
         <span class="active">登录</span>
         <span>注册</span>
       </div>
+      <loginForm/>
     </div>
   </div>
 </template>
 
 <script>
+import loginForm from '@/components/user/loginForm.vue'
 export default {
-
+  components:{
+    loginForm
+  }
 }
 </script>
 

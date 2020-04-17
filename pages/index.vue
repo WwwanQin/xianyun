@@ -53,7 +53,7 @@ export default {
     mounted(){
         this.$axios({
             url: '/scenics/banners',
-            method: 'get'
+            method: 'get',
         }).then(res => {
             let {data:{data}} = res;
             console.log(data);
