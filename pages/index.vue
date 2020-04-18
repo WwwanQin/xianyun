@@ -20,7 +20,7 @@
             </span>
         </div>
         <div class="search-content">
-            <input placeholder="搜索城市"><i class="el-icon-search"></i>
+            <input :placeholder="'搜索'+ tabs[current].title"><i class="el-icon-search"></i>
         </div>
     </div>
   </div>
@@ -101,6 +101,7 @@ export default {
             border-radius:0px 10px 0px 0px;
             cursor:pointer; 
             margin-left: 3px;
+            color: #5e5a5a;
           }
           .active{
                 display: inline-block;

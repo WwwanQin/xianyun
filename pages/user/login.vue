@@ -2,10 +2,10 @@
   <div class="login">
     <div class="form-wrapper">
       <div class="tabs">
-        <span class="active">登录</span>
-        <span>注册</span>
+        <span :class="{active: current == 'login'}" @click="changeCurrent('login')">登录</span>
+        <span :class="{active: current == 'submit'}" @click="changeCurrent('submit')">注册</span>
       </div>
-      <loginForm/>
+      <loginForm v-if="current == 'login'"/>
     </div>
   </div>
 </template>
@@ -13,6 +13,16 @@
 <script>
 import loginForm from '@/components/user/loginForm.vue'
 export default {
+  data(){
+    return {
+      current: 'login'
+    }
+  },
+  methods:{
+    changeCurrent(type){
+      this.current = type;
+    }
+  },
   components:{
     loginForm
   }
@@ -36,6 +46,7 @@ export default {
         width: 100%;
         display: flex;
         justify-content: center;
+        cursor: pointer;
         span{
           text-align: center;
           flex:  0 0 50%;

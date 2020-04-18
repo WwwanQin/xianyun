@@ -24,7 +24,7 @@ export const actions = {
             }).then(res => {
                 console.log(res.data);
                 commit('saveUserInfo',res.data);
-                resolve(res);
+                resolve(res.data);
             }).catch(reason => {
                 reject(reason);
             })

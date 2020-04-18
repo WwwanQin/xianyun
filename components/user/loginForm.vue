@@ -60,18 +60,11 @@ export default {
         saveUserMessage(){
             this.$store.dispatch('user/userLogin',this.ruleForm).then(res => {
                 console.log(res);
-                this.$message({
-                    type: 'success',
-                    message: '登录成功'
-                })
-                setTimeout(()=>{
-                    this.$router.replace('/');
-                },1000)
+                this.$message({ type: 'success',message: `登录成功，欢迎：${res.user.nickname}` })
+                setTimeout(()=>{ this.$router.replace('/'); },1000)
             }).catch(reason => {
-                this.$message({
-                    type: 'error',
-                    message: '登录失败'
-                })
+                console.log(reason);
+                this.$message({ type: 'error',message: '登录失败' })
             })
         }
     }
