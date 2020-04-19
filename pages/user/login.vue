@@ -3,15 +3,17 @@
     <div class="form-wrapper">
       <div class="tabs">
         <span :class="{active: current == 'login'}" @click="changeCurrent('login')">登录</span>
-        <span :class="{active: current == 'submit'}" @click="changeCurrent('submit')">注册</span>
+        <span :class="{active: current == 'register'}" @click="changeCurrent('register')">注册</span>
       </div>
-      <loginForm v-if="current == 'login'"/>
+      <loginForm v-if="current == 'login' "/>
+      <registerForm v-if="current == 'register' "/>
     </div>
   </div>
 </template>
 
 <script>
 import loginForm from '@/components/user/loginForm.vue'
+import registerForm from '@/components/user/registerForm.vue'
 export default {
   data(){
     return {
@@ -24,7 +26,8 @@ export default {
     }
   },
   components:{
-    loginForm
+    loginForm,
+    registerForm
   }
 }
 </script>
@@ -33,7 +36,7 @@ export default {
   .login{
     width: 100%;
     min-width: 1000px;
-    height: 500px;
+    height: 700px;
     background: url('../../static/th.jpg') center center no-repeat;
     background-size: 100%;
     .form-wrapper{

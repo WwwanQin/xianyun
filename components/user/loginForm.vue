@@ -8,8 +8,8 @@
                 v-model="ruleForm.username">
                 </el-input>
             </el-form-item>
-            <el-form-item class="form-item" prop="username">
-                <!-- 用户名输入框 -->
+            <el-form-item class="form-item" prop="password">
+                <!-- 密码输入框 -->
                 <el-input 
                 type="password"
                 placeholder="密码" 
