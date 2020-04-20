@@ -1,9 +1,11 @@
-export const state = () => ({
-    userInfo:{
-        user: {},
-        token: ''
+export const state = () => {
+    return {
+        userInfo:{
+            user: {},
+            token: ''
+        }
     }
-})
+}
 export const mutations = {
     saveUserInfo(state,data){
         state.userInfo = data;

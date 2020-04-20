@@ -62,9 +62,6 @@ export default {
                 console.log(res);
                 this.$message({ type: 'success',message: `登录成功，欢迎：${res.user.nickname}` })
                 setTimeout(()=>{ this.$router.replace('/'); },1000)
-            }).catch(reason => {
-                console.log(reason);
-                this.$message({ type: 'error',message: '登录失败' })
             })
         }
     }
