@@ -131,6 +131,7 @@ export default {
         },
         departCityBlur(){
             if(this.departCityArray.length > 0){
+                console.log(1);
                 this.form.departCity = this.departCityArray[0].value;
                 this.form.departCityCode = this.departCityArray[0].sort;
             }
@@ -161,7 +162,11 @@ export default {
             })
         },
         handleReverse(){
-            console.log('切换');
+            let { departCity,departCityCode,arriveCity,arriveCityCode } = this.form;
+            this.form.arriveCity = departCity;
+            this.form.arriveCityCode = departCityCode;
+            this.form.departCity = arriveCity;
+            this.form.departCityCode = arriveCityCode
         },
         submitCitys(formName){
             this.$refs[formName].validate((valid) => {
