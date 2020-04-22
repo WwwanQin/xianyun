@@ -97,6 +97,8 @@ export default {
         },
         queryDepartCity(queryString, cb){
             if(!queryString){
+                cb([]);
+                this.departCityArray = [];
                 return;
             }
             this.queryAirsCity(queryString).then(res => {
@@ -111,6 +113,8 @@ export default {
         },
         queryArriveCity(queryString,cb){
             if(!queryString){
+                cb([])
+                this.arriveCityArray = [];
                 return;
             }
             this.queryAirsCity(queryString).then(res => {
@@ -131,7 +135,6 @@ export default {
         },
         departCityBlur(){
             if(this.departCityArray.length > 0){
-                console.log(1);
                 this.form.departCity = this.departCityArray[0].value;
                 this.form.departCityCode = this.departCityArray[0].sort;
             }
@@ -171,7 +174,16 @@ export default {
         submitCitys(formName){
             this.$refs[formName].validate((valid) => {
                 if(valid){
-                    console.log(this.form);
+                    this.$router.replace({
+                        path: '/air/flights',
+                        query: {
+                            arriveCity: this.form.arriveCity,
+                            arriveCityCode: this.form.arriveCityCode,
+                            departCity: this.form.departCity,
+                            departCityCode: this.form.departCityCode,
+                            departDate: this.form.departDate
+                        }
+                    });
                 }
             })
         }
