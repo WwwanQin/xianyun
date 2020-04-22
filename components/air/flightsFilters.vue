@@ -3,20 +3,18 @@
         <el-row type="flex" class="filters-top" justify="space-between" align="middle">
             <el-col :span="8">
                 单程：
-                {{ departCity }} - 
-                {{ destCity }} 
+                {{flightsData.info.departCity}} - {{flightsData.info.destCity}}
                 / 
-                {{ departDate }}
+                {{ flightsData.info.departDate }}
                
             </el-col>
             <el-col :span="4">
                 <el-select 
                 size="mini" 
                 v-model="search.airport"
-                @change="changeAirport"
                 placeholder="起飞机场">
                     <el-option
-                    v-for="(item,index) in $store.state.flightsData.flightsData.options.airport"
+                    v-for="(item,index) in flightsData.options.airport"
                     :key="index"
                     :label="item"
                     :value="item"
@@ -28,7 +26,6 @@
                 <el-select 
                 size="mini" 
                 v-model="search.flightTimes" 
-                @change="changeFlightTimes" 
                 placeholder="起飞时间">
                     <el-option
                     v-for="(item,index) in flightTimeArray"
@@ -43,10 +40,9 @@
                 <el-select 
                 size="mini" 
                 v-model="search.company"
-                change="changeCompany"  
                 placeholder="航空公司">
                     <el-option
-                    v-for="(item,index) in $store.state.flightsData.flightsData.options.company"
+                    v-for="(item,index) in flightsData.options.company"
                     :key="index"
                     :label="item"
                     :value="item">
@@ -57,7 +53,6 @@
                 <el-select 
                 size="mini" 
                 v-model="search.airSize" 
-                change="changeAirSize"
                 placeholder="机型">
                     <el-option
                     v-for="(item,index) in optionSize"
@@ -79,11 +74,18 @@
                 撤销
     		</el-button>
         </div>
+        {{ filter }}
     </div>
 </template>
 
 <script>
 export default {
+    props:{
+        flightsData:{          
+            type: Object,
+            default: {}
+        }
+    },
     data(){
         return {
             search:{
@@ -100,16 +102,20 @@ export default {
         }
     },
     methods:{
-        changeAirport(){
+        // changeAirport(val){
+        //     let flights = [... this.flightsData.flights];
+        //     let airs = flights.filter(ele => {
+        //         return ele.org_airport_name == val;
+        //     });
+        //     this.$emit('getData',airs);
+        // },
+        changeFlightTimes(val){
 
         },
-        changeFlightTimes(){
+        changeCompany(val){
 
         },
-        changeCompany(){
-
-        },
-        changeAirSize(){
+        changeAirSize(val){
 
         },
         revoke(){
@@ -120,18 +126,9 @@ export default {
         }
     },
     computed:{
-        departCity(){
-            return this.$store.state.flightsData.flightsData.info.departCity
-        },
-        destCity(){
-            return this.$store.state.flightsData.flightsData.info.destCity
-        },
-        departDate(){
-            return this.$store.state.flightsData.flightsData.info.departDate
-        },
         flightTimeArray(){
-            if(this.$store.state.flightsData.flightsData.options.flightTimes){
-                let times = this.$store.state.flightsData.flightsData.options.flightTimes.map((ele) => {
+            if(this.flightsData.options.flightTimes){
+                let times = this.flightsData.options.flightTimes.map((ele) => {
                     return {
                         label: `${ele.from}:00 - ${ele.to}:00`,
                         value: `${ele.from},${ele.to}`
@@ -141,10 +138,37 @@ export default {
             }else{
                 return {};
             }
+        },
+        filter(){
+            const filterArray = [
+                {
+                    key: this.search.airport,
+                    fn: flag => (this.search.airport && this.search.airport === flag.org_airport_name)
+                },
+                {
+                    key: this.search.company,
+                    fn: flag => (this.search.company && this.search.company === flag.airline_name)
+                },
+                {
+                    key: this.search.airSize,
+                    fn: flag => (this.search.airSize && this.search.airSize === flag.plane_size)
+                },
+                {
+                    key: this.search.flightTimes,
+                    fn: flag => {
+                        let [from, to] = this.search.flightTimes.split(',');
+                        let currentTime = flag.dep_time.split(':')[0];
+                        return this.search.flightTimes && (+currentTime > +from && +currentTime < +to);
+                    }
+                }
+            ]
+            let filters = filterArray.filter(item => item.key);
+            let airs = this.flightsData.flights.filter(ele => {
+                return filters.every(item => item.fn(ele));
+            })
+            this.$emit('getData',airs);
+            return '';
         }
-    },
-    mounted(){
-        console.log();
     }
 }
 </script>

@@ -7,7 +7,8 @@
                 <!-- 过滤条件 -->
                 <div>
                     <flightFilters
-                    :fightsData="flightsData.info"/>
+                    :flightsData="flightsDataCatch"
+                    @getData="getData"/>
                 </div>
                 
                 <!-- 航班头部布局 -->
@@ -61,7 +62,16 @@ export default {
     data(){
         return{
             dataList: [],
-            flightsData: {},
+            flightsData: {
+                info: {},
+                flights: [],
+                options: {}
+            },
+            flightsDataCatch:{
+                info: {},
+                flights: [],
+                options: {}
+            },
             pageIndex: 1,
             pageSize: 5,
             total: 0
@@ -80,6 +90,12 @@ export default {
             this.dataList = this.flightsData.flights.slice(
                 (this.pageIndex - 1) * this.pageSize,
                 this.pageIndex * this.pageSize);
+        },
+        getData(airs){
+            this.pageIndex = 1;
+            this.total = airs.length
+            this.flightsData.flights = airs;
+            this.dataList = this.flightsData.flights.slice(0,this.pageIndex * this.pageSize);
         }
     },
     mounted(){
@@ -101,7 +117,7 @@ export default {
             }
         }).then(res => {
             this.flightsData = res.data;
-            this.$store.commit('flightsData/savefightsData',this.flightsData);
+            this.flightsDataCatch = {... res.data}
             this.dataList = this.flightsData.flights.slice(0,this.pageIndex * this.pageSize);
             this.total = this.flightsData.total;
         }).catch(reason => {
