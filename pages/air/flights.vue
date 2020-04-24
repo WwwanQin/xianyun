@@ -96,33 +96,42 @@ export default {
             this.total = airs.length
             this.flightsData.flights = airs;
             this.dataList = this.flightsData.flights.slice(0,this.pageIndex * this.pageSize);
+        },
+        initData(){
+            let {
+                arriveCity: destCity,
+                arriveCityCode: destCode,
+                departCity: departCity,
+                departCityCode: departCode,
+                departDate: departDate
+            } = this.$route.query;
+            this.$axios({
+                url: '/airs',
+                method: 'get',
+                params:{
+                    destCity,
+                    destCode,
+                    departCity,
+                    departCode,
+                    departDate
+                }
+            }).then(res => {
+                this.flightsData = res.data;
+                this.flightsDataCatch = {... res.data}
+                this.dataList = this.flightsData.flights.slice(0,this.pageIndex * this.pageSize);
+                this.total = this.flightsData.total;
+            }).catch(reason => {
+                console.log(reason);
+            })
         }
     },
     mounted(){
-        let {
-        arriveCity: destCity,
-        arriveCityCode: destCode,
-        departCity: departCity,
-        departCityCode: departCode,
-        departDate: departDate} = this.$route.query;
-        this.$axios({
-            url: '/airs',
-            method: 'get',
-            params:{
-                destCity,
-                destCode,
-                departCity,
-                departCode,
-                departDate
-            }
-        }).then(res => {
-            this.flightsData = res.data;
-            this.flightsDataCatch = {... res.data}
-            this.dataList = this.flightsData.flights.slice(0,this.pageIndex * this.pageSize);
-            this.total = this.flightsData.total;
-        }).catch(reason => {
-            console.log(reason);
-        })
+        this.initData();
+    },
+    watch:{
+        $route(){
+            this.initData();
+        }
     }
 }
 </script>

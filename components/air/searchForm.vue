@@ -134,16 +134,20 @@ export default {
             this.form.arriveCityCode = item.sort;
         },
         departCityBlur(){
-            if(this.departCityArray.length > 0){
-                this.form.departCity = this.departCityArray[0].value;
-                this.form.departCityCode = this.departCityArray[0].sort;
-            }
+            setTimeout(() => {
+                if(this.departCityArray.length > 0){
+                    this.form.departCity = this.departCityArray[0].value;
+                    this.form.departCityCode = this.departCityArray[0].sort;
+                }
+            },1000)
         },
         arriveCityBlur(){
-            if(this.arriveCityArray.length > 0){
-                this.form.arriveCity = this.arriveCityArray[0].value
-                this.form.arriveCityCode = this.arriveCityArray[0].sort;
-            }
+            setTimeout(() => {
+                if(this.arriveCityArray.length > 0){
+                    this.form.arriveCity = this.arriveCityArray[0].value
+                    this.form.arriveCityCode = this.arriveCityArray[0].sort;
+                }
+            },1000)
         },
         // 封装查询飞机机票
         queryAirsCity(queryString,fn){
@@ -166,6 +170,7 @@ export default {
         },
         handleReverse(){
             let { departCity,departCityCode,arriveCity,arriveCityCode } = this.form;
+            console.log(this.form);
             this.form.arriveCity = departCity;
             this.form.arriveCityCode = departCityCode;
             this.form.departCity = arriveCity;
@@ -174,6 +179,7 @@ export default {
         submitCitys(formName){
             this.$refs[formName].validate((valid) => {
                 if(valid){
+                    this.$store.commit('air/pushHistory',this.form);
                     this.$router.replace({
                         path: '/air/flights',
                         query: {

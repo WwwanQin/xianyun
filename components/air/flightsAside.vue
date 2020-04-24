@@ -22,25 +22,42 @@
 
         <div class="history">
             <h5>历史查询</h5>
-            <nuxt-link to="#">
+            <div to="#"
+            v-for="(item,index) in $store.state.air.airHistory"
+            :key="index"
+            @click="handleSearch(item)">
                 <el-row type="flex" 
                 justify="space-between" 
                 align="middle"
                 class="history-item">
                     <div class="air-info">
-                        <div class="to-from">广州 - 上海</div>
-                        <p>2019-06-16</p>
+                        <div class="to-from">{{ item.departCity }} - {{ item.arriveCity }}</div>
+                        <p>{{ item.departDate }}</p>
                     </div>
                     <span>选择</span>
                 </el-row>
-            </nuxt-link>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+import moment from 'moment';
 export default {
-
+    methods:{
+        handleSearch(item){
+            let data = {...item};
+            let _nowData = +moment().format('YYYYMMDD');
+            let _departDate = +moment(data.departDate).format('YYYYMMDD');
+            if(_departDate < _nowData){
+                data.departDate = moment().format('YYYY-MM-DD');
+            }
+            this.$router.push({
+                path: '/air/flights',
+                query: data
+            })
+        }
+    }
 }
 </script>
 

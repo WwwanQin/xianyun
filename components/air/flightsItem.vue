@@ -34,20 +34,28 @@
             <el-row type="flex"  justify="space-between" align="middle">
                 <el-col :span="4">低价推荐</el-col>
                 <el-col :span="20">
-                    <el-row type="flex" justify="space-between" align="middle" class="flight-sell">
+                    <el-row type="flex" 
+                    justify="space-between" 
+                    align="middle" 
+                    class="flight-sell"
+                    v-for="(item,index) in fightData.seat_infos"
+                    :key="index">
+                    {{ fightData.id }}
+                    
                         <el-col :span="16" class="flight-sell-left">
-                            <span>经济舱</span> | 上海一诺千金航空服务有限公司
+                            <span>{{ item.name }}</span> | {{ item.supplierName }}
                         </el-col>
                         <el-col :span="5" class="price">
-                            ￥1345
+                            ￥{{ item.settle_price }}
                         </el-col>
                         <el-col :span="3" class="choose-button">
                             <el-button 
                             type="warning" 
-                            size="mini">
+                            size="mini"
+                            @click="submitOrder(item)">
                             选定
                             </el-button>
-                            <p>剩余：83</p>
+                            <p>剩余：{{ item.discount }}</p>
                         </el-col>
                     </el-row>
                 </el-col>
@@ -60,6 +68,17 @@ export default {
     data(){
         return{
             isShow:false,
+        }
+    },
+    methods:{
+        submitOrder(item){
+            this.$router.push({
+                path: '/air/order',
+                query: {
+                    id: this.fightData.id,
+                    seat_xid: item.seat_xid
+                }
+            });
         }
     },
     props:{
