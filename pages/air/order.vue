@@ -3,7 +3,7 @@
         <el-row type="flex" justify="space-between">
             <orderForm/>
             <div class="aside">
-
+                <orderAside :data="$store.state.air"/>
             </div>
         </el-row>
     </div>
@@ -11,6 +11,7 @@
 
 <script>
 import orderForm from '@/components/air/orderForm.vue'
+import orderAside from '@/components/air/orderAside.vue'
 export default {
     data(){
         return {
@@ -18,7 +19,8 @@ export default {
         }
     },
     components:{
-        orderForm
+        orderForm,
+        orderAside
     }
 }
 </script>

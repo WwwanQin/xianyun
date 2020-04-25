@@ -40,7 +40,21 @@
 
     <!-- 特价机票 -->
     <div class="air-sale">
-        
+      <el-row 
+      type="flex" 
+      justify="space-between" 
+      class="air-sale-pic">
+        <div
+        v-for="(item,index) in sales"
+        :key="index"
+        @click="bundleJump(item)">
+          <img :src="item.cover">
+          <el-row class="layer-bar" type="flex" justify="space-between">
+              <span>{{item.departCity}}-{{item.destCity}}</span>
+              <span>￥{{item.price}}</span>
+          </el-row>
+        </div>
+      </el-row>
     </div>
   </section>
 </template>
@@ -50,6 +64,36 @@ import searchForm from '@/components/air/searchForm'
 export default {
   components:{
     searchForm
+  },
+  methods:{
+    bundleJump(item){
+      let {cover,price,...obj} = item;
+      console.log(obj);
+      this.$router.push({
+        path: '/air/flights',
+        query: {
+          departCity: obj.departCity,
+          departCityCode: obj.departCode,
+          arriveCity: obj.destCity,
+          arriveCityCode: obj.destCode,
+          departDate: obj.departDate
+        }
+      })
+    }
+  },
+  data(){
+    return {
+      sales: []
+    }
+  },
+  mounted(){
+    this.$axios({
+      url: '/airs/sale',
+      method: 'get'
+    }).then(res => {
+      console.log(res);
+      this.sales =  res.data.data;
+    })
   }
 }
 </script>

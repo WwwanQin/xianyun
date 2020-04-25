@@ -2,44 +2,46 @@
     <div class="main">
         <div class="air-column">
             <h2>乘机人</h2>
-            <el-form class="member-info">
+            <el-form class="member-info" ref="form" :rules="rules" :model="form">
                 <!-- 乘机人用户列表，根据form.users要循环 -->
                 <div class="member-info-item"
                 v-for="(item,index) in form.users"
                 :key="index">
-                    <el-form-item label="乘机人类型">
-                        <!-- 重点关注input,忽略select即可 -->
-                        <el-input 
-                        placeholder="姓名" 
-                        class="input-with-select"
-                        v-model="item.username">
-                            <el-select 
-                            slot="prepend" 
-                            value="1" 
-                            placeholder="请选择">
-                                <el-option label="成人" value="1"></el-option>
-                            </el-select>
-                        </el-input>
-                    </el-form-item>
+                    <el-form-item prop="users">
+                        <el-form-item label="乘机人类型">
+                            <!-- 重点关注input,忽略select即可 -->
+                            <el-input 
+                            placeholder="姓名" 
+                            class="input-with-select"
+                            v-model="item.username">
+                                <el-select 
+                                slot="prepend" 
+                                value="1" 
+                                placeholder="请选择">
+                                    <el-option label="成人" value="1"></el-option>
+                                </el-select>
+                            </el-input>
+                        </el-form-item>
 
-                    <el-form-item label="证件类型">
-                        <!-- 重点关注input,忽略select即可 -->
-                        <el-input 
-                        placeholder="证件号码"  
-                        class="input-with-select"
-                        v-model="item.id">
-                            <el-select 
-                            slot="prepend" 
-                            value="1"           
-                            placeholder="请选择">
-                                <el-option label="身份证" value="1" :checked="true"></el-option>
-                            </el-select>
-                        </el-input>
+                        <el-form-item label="证件类型">
+                            <!-- 重点关注input,忽略select即可 -->
+                            <el-input 
+                            placeholder="证件号码"  
+                            class="input-with-select"
+                            v-model="item.id">
+                                <el-select 
+                                slot="prepend" 
+                                value="1"           
+                                placeholder="请选择">
+                                    <el-option label="身份证" value="1" :checked="true"></el-option>
+                                </el-select>
+                            </el-input>
+                        </el-form-item>
                     </el-form-item>
-                    <!-- 删除用户 -->
-                    <span 
-                    class="delete-user" 
-                    @click="delUser(index)">-</span>
+                <!-- 删除用户 -->
+                <span 
+                class="delete-user" 
+                @click="delUser(index)">-</span>
                 </div>
             </el-form>
 
@@ -66,7 +68,6 @@
                 </div>
             </div>
         </div>
-
         <div class="air-column">
             <h2>联系人</h2>
             <div class="contact">
@@ -99,11 +100,55 @@
                 @click="submitOrder">提交订单</el-button>
             </div>
         </div>
+        <div v-show="false">
+            {{ allPrice }}
+        </div>
     </div>
 </template>
 
 <script>
 export default {
+    data(){
+        const validatorUser = (rule,value,callback) => {
+            let flag = true;
+            for (const ele of value) {
+                if(!flag) return;
+                if(ele.username.trim() == ''){
+                    flag = true;
+                    return callback(new Error('乘客姓名不能为空'));
+                }
+                if(ele.id.trim() == ''){
+                    flag = true;
+                    return callback(new Error('证件号码不能为空'));
+                }
+            }
+        }
+        return {
+            time: 60,
+            timeState:'发送验证码',
+            form: {
+                // 乘客列表 
+                users: [
+                     {username: "", id: ""}
+                ],
+                // 保险
+                insurances: [],
+                contactName: '',
+                contactPhone: '',
+                invoice: false,
+                captcha: '',
+                seat_xid: '',
+                air: ''
+            },
+            rules:{
+                users: [
+                    // 自定义验证，validatorUser是个函数，在data里面有定义
+                    { validator: validatorUser, trigger: "blur" } 
+                ],
+            },
+            detail: {}
+        }
+    },
     methods:{
         // 添加乘客
         addUser(){
@@ -127,6 +172,7 @@ export default {
         },
         // 提交订单
         submitOrder(){
+            console.log(1);
             let token = this.$store.state.user.userInfo.token;
             if(!token){
                 this.$message({
@@ -146,21 +192,35 @@ export default {
                         type: 'success',
                         message: '订单创建成功'
                     });
+                    let {id} = res.data.data;
+                    this.$router.push({
+                        path: '/air/pay',
+                        query: {
+                            id
+                        }
+                    })
                 }).catch(reason => {
                     console.log(reason);
                 })
-            }
+            }       
         },
         // 发送验证码
         sendCaptcha(){
             console.log(this.form.contactPhone);
-            this.$store.dispatch('user/getPhoneCode',{tel:this.form.contactPhone}).then(res => {
-                this.$message({
-                    type: 'success',
-                    message: `您的验证码是：${res.data.code}`
+            if(this.form.contactPhone){
+                this.$store.dispatch('user/getPhoneCode',{tel:this.form.contactPhone}).then(res => {
+                    this.$message({
+                        type: 'success',
+                        message: `您的验证码是：${res.data.code}`
+                    });
                 });
-            });
-            this.countDown();
+                this.countDown();
+            }else{
+                this.$message({
+                    type: 'warning',
+                    message: '请填写电话号码'
+                })
+            }
         },
         // 倒计时
         countDown(){
@@ -187,29 +247,29 @@ export default {
                 seat_xid: seat_xid
             }
         }).then(res => {
-            console.log(res.data);
             this.detail = res.data;
+            this.$store.commit('air/setFightData',this.detail)
         }).catch(reason => {
             console.log(reason);
         })
     },
-    data(){
-        return {
-            time: 60,
-            timeState:'发送验证码',
-            form: {
-                users: [
-                    {username:'',id:''}
-                ],
-                insurances: [],
-                contactName: '',
-                contactPhone: '',
-                invoice: false,
-                captcha: '',
-                seat_xid: '',
-                air: ''
-            },
-            detail: {}
+    computed:{
+        allPrice: function() {
+            let price = 0;
+            if(!this.detail.seat_infos) return 0;
+            price += this.detail.seat_infos.org_settle_price;
+            price += this.detail.airport_tax_audlet;
+            this.form.insurances.forEach(ele => {
+                this.detail.insurances.forEach(item => {
+                    if(ele == item.id){
+                        price += item.price;
+                    }
+                })
+            })
+            price *= this.form.users.length;
+            this.$store.commit('air/setAllPrice',price);
+            this.$store.commit('air/setPassengerNumber',this.form.users.length);
+            return price;
         }
     }
 }
