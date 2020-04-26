@@ -103,7 +103,7 @@ export default {
         padding:10px 0;
         font-size: 14px;
         border-bottom: 1px #eee solid;
-
+        cursor: pointer;
         &:last-child{
             border:none;
         }

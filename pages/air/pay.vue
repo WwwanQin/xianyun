@@ -32,30 +32,43 @@ export default {
     data(){
         return {
             detail: {
+                price: 0
             }
         }
     },
     mounted(){
-        setTimeout(() => {
-            let {id} = this.$route.query;
-            let token = this.$store.state.user.userInfo.token;
-            // /airorders/
-            this.$axios({
-                url: `/airorders/${id}`,
-                headers: {
-                    Authorization: `Bearer ` +token
-                },
-            }).then(res => {
-                this.detail = res.data;
-                console.log(this.detail);
-                let qrele = document.querySelector('#qrcode-stage');
-                QRCode.toCanvas(qrele,this.detail.payInfo.code_url,{
-                    width: 200
+            setTimeout(async () => {
+                let {id} = this.$route.query;
+                let token = this.$store.state.user.userInfo.token;
+                if(token){
+                    let payResponse = await this.$axios({
+                        url: `/airorders/${id}`,
+                        headers: {
+                            Authorization: `Bearer ` +token
+                        },
+                    })
+                    console.log(payResponse);
+                }
+            },10)
+        // }
+    },
+    beforeRouteEnter(to,from,next){
+        next(vm => {
+            let user = vm.$store.state.user;
+            if(!user || !user.userInfo.token){
+                console.log(2);
+                vm.$message({
+                    type: 'warning',
+                    message: '请登录后再下机票订单'
                 })
-            }).catch(reason => {
-                console.log(reason);
-            })
-        },10)
+                vm.$router.replace({
+                    path: '/air'
+                })
+            }else{
+                console.log(1);
+                return true;
+            }
+        });
     }
 }
 </script>

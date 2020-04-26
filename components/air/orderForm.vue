@@ -271,6 +271,9 @@ export default {
             this.$store.commit('air/setPassengerNumber',this.form.users.length);
             return price;
         }
+    },
+    beforeRouteEnter(to,from,next){
+        
     }
 }
 </script>

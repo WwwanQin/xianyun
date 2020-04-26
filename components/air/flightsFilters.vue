@@ -163,6 +163,7 @@ export default {
                 }
             ]
             let filters = filterArray.filter(item => item.key);
+            // 获取到用于过滤的数组
             let airs = this.flightsData.flights.filter(ele => {
                 return filters.every(item => item.fn(ele));
             })

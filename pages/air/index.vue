@@ -91,7 +91,6 @@ export default {
       url: '/airs/sale',
       method: 'get'
     }).then(res => {
-      console.log(res);
       this.sales =  res.data.data;
     })
   }
